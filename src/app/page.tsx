@@ -18,19 +18,24 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = async (overrides?: { from?: string; to?: string; wallet?: string }) => {
     setLoading(true);
     setError(null);
 
     try {
+      // Use overrides if provided, otherwise use current state
+      const finalFrom = overrides?.from ?? fromDate;
+      const finalTo = overrides?.to ?? toDate;
+      const finalWallet = overrides?.wallet ?? customWallet;
+
       // Build query params
       const params = new URLSearchParams({
-        from: fromDate,
-        to: toDate,
+        from: finalFrom,
+        to: finalTo,
       });
 
-      if (customWallet) {
-        params.set('wallet', customWallet);
+      if (finalWallet) {
+        params.set('wallet', finalWallet);
       }
 
       // Fetch volume data and stats in parallel
@@ -64,12 +69,14 @@ export default function Home() {
   const handleDateChange = (from: string, to: string) => {
     setFromDate(from);
     setToDate(to);
-    setTimeout(fetchData, 100);
+    // Fetch data immediately with new values (don't wait for state update)
+    fetchData({ from, to });
   };
 
   const handleWalletChange = (wallet: string) => {
     setCustomWallet(wallet);
-    setTimeout(fetchData, 100);
+    // Fetch data immediately with new wallet value
+    fetchData({ wallet });
   };
 
   return (
