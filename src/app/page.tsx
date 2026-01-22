@@ -185,7 +185,7 @@ export default function Home() {
             Last sync completed: {new Date(syncStatus.lastSyncCompletedAt).toISOString().replace('T', ' ').substring(0, 19)} UTC
           </p>
         )}
-        <p className="text-xs">
+        <p>
           Note: Trade data from Hyperliquid may be delayed by 1-2 days due to API limitations
         </p>
       </div>

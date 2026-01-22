@@ -6,9 +6,10 @@ import QRCode from 'react-qr-code';
 interface ReferralLinkProps {
   title: string;
   url: string;
+  description?: string;
 }
 
-function ReferralLink({ title, url }: ReferralLinkProps) {
+function ReferralLink({ title, url, description }: ReferralLinkProps) {
   return (
     <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
       {/* QR Code */}
@@ -29,6 +30,11 @@ function ReferralLink({ title, url }: ReferralLinkProps) {
         >
           {url}
         </a>
+        {description && (
+          <p className="text-sm font-semibold text-foreground mt-2">
+            {description}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -42,6 +48,7 @@ export function ReferralSection() {
           <ReferralLink
             title="OUTKAST"
             url="https://go.outkast.xyz/yvtp/SAPPORO"
+            description="Data shows competition is still low. Best time to join is NOW."
           />
           <ReferralLink
             title="KAST Card"
