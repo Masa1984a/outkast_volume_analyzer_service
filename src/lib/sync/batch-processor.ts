@@ -110,7 +110,7 @@ export async function syncBuilderFills(): Promise<SyncResult> {
       lastSyncedDate: new Date(yesterday),
       lastSyncCompletedAt: new Date(),
       lastSyncStatus: 'success',
-      errorMessage: result.errors.length > 0 ? result.errors.join('; ') : null,
+      errorMessage: result.errors.length > 0 ? result.errors.join('; ') : undefined,
     });
 
     result.success = true;

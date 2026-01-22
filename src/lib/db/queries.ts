@@ -256,7 +256,7 @@ export async function updateSyncStatus(
       last_sync_started_at = COALESCE(${startedAt}, last_sync_started_at),
       last_sync_completed_at = COALESCE(${completedAt}, last_sync_completed_at),
       last_sync_status = COALESCE(${lastSyncStatus || null}, last_sync_status),
-      error_message = ${errorMessage || null},
+      error_message = ${errorMessage ?? null},
       updated_at = NOW()
     WHERE id = (SELECT id FROM sync_status ORDER BY id DESC LIMIT 1)
   `;
