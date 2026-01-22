@@ -15,6 +15,13 @@ function getTodayString(): string {
 }
 
 export default function Home() {
+  // Filter inputs (temporary, not yet applied)
+  const [inputFromDate, setInputFromDate] = useState('2026-01-01');
+  const [inputToDate, setInputToDate] = useState(getTodayString());
+  const [inputWallet, setInputWallet] = useState('');
+  const [dateError, setDateError] = useState<string | null>(null);
+
+  // Applied filters (used for API calls)
   const [fromDate, setFromDate] = useState('2026-01-01');
   const [toDate, setToDate] = useState(getTodayString());
   const [customWallet, setCustomWallet] = useState('');
@@ -88,17 +95,26 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleDateChange = (from: string, to: string) => {
-    setFromDate(from);
-    setToDate(to);
-    // Fetch data immediately with new values (don't wait for state update)
-    fetchData({ from, to });
+  const handleApplyFilters = () => {
+    setDateError(null);
+
+    // Validate date range
+    if (new Date(inputFromDate) > new Date(inputToDate)) {
+      setDateError('From date must be before or equal to To date');
+      return;
+    }
+
+    // Update applied filters
+    setFromDate(inputFromDate);
+    setToDate(inputToDate);
+    setCustomWallet(inputWallet);
+
+    // Fetch data with new filters
+    fetchData({ from: inputFromDate, to: inputToDate, wallet: inputWallet });
   };
 
-  const handleWalletChange = (wallet: string) => {
-    setCustomWallet(wallet);
-    // Fetch data immediately with new wallet value
-    fetchData({ wallet });
+  const handleClearWallet = () => {
+    setInputWallet('');
   };
 
   return (
@@ -118,8 +134,23 @@ export default function Home() {
             <CardTitle className="text-lg">Filters</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <DateRangeFilter onDateChange={handleDateChange} />
-            <WalletInput onWalletChange={handleWalletChange} />
+            <DateRangeFilter
+              fromDate={inputFromDate}
+              toDate={inputToDate}
+              onFromDateChange={setInputFromDate}
+              onToDateChange={setInputToDate}
+              error={dateError}
+            />
+            <WalletInput
+              wallet={inputWallet}
+              onWalletChange={setInputWallet}
+              onClear={handleClearWallet}
+            />
+            <div className="pt-2">
+              <Button onClick={handleApplyFilters} className="w-full sm:w-auto">
+                Apply Filters
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

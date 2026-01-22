@@ -5,21 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface WalletInputProps {
+  wallet: string;
   onWalletChange: (wallet: string) => void;
+  onClear: () => void;
 }
 
-export function WalletInput({ onWalletChange }: WalletInputProps) {
-  const [wallet, setWallet] = useState('');
-
-  const handleApply = () => {
-    onWalletChange(wallet);
-  };
-
-  const handleClear = () => {
-    setWallet('');
-    onWalletChange('');
-  };
-
+export function WalletInput({ wallet, onWalletChange, onClear }: WalletInputProps) {
   return (
     <div className="flex gap-2 items-end">
       <div className="flex flex-col gap-2 flex-1">
@@ -31,14 +22,13 @@ export function WalletInput({ onWalletChange }: WalletInputProps) {
           type="text"
           placeholder="0x..."
           value={wallet}
-          onChange={(e) => setWallet(e.target.value)}
+          onChange={(e) => onWalletChange(e.target.value)}
           className="font-mono text-sm"
         />
       </div>
 
-      <Button onClick={handleApply}>Apply</Button>
       {wallet && (
-        <Button variant="outline" onClick={handleClear}>
+        <Button variant="outline" onClick={onClear}>
           Clear
         </Button>
       )}
