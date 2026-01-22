@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CHART_COLORS } from '@/lib/constants/colors';
 
@@ -34,6 +35,66 @@ function getColorForRank(rank: number): string {
   return CHART_COLORS.others;
 }
 
+function truncateAddress(address: string): string {
+  if (address.length <= 10) return address;
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+function CopyButton({ address }: { address: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="ml-2 p-1.5 rounded hover:bg-muted transition-colors"
+      title="Copy address"
+    >
+      {copied ? (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-green-500"
+        >
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      ) : (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-muted-foreground"
+        >
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
 export function RankingList({ topWallets, customWalletStats }: RankingListProps) {
   return (
     <Card>
@@ -57,8 +118,9 @@ export function RankingList({ topWallets, customWalletStats }: RankingListProps)
                     {customWalletStats.rank}
                   </div>
                   <div>
-                    <div className="font-mono text-sm font-medium">
-                      {customWalletStats.address}
+                    <div className="font-mono text-sm font-medium flex items-center">
+                      {truncateAddress(customWalletStats.address)}
+                      <CopyButton address={customWalletStats.address} />
                     </div>
                     <div className="text-xs text-muted-foreground">Custom Wallet</div>
                   </div>
@@ -86,7 +148,10 @@ export function RankingList({ topWallets, customWalletStats }: RankingListProps)
                 >
                   {wallet.rank}
                 </div>
-                <div className="font-mono text-sm">{wallet.address}</div>
+                <div className="font-mono text-sm flex items-center">
+                  {truncateAddress(wallet.address)}
+                  <CopyButton address={wallet.address} />
+                </div>
               </div>
               <div className="text-right">
                 <div className="font-semibold">{formatVolume(wallet.volume)}</div>

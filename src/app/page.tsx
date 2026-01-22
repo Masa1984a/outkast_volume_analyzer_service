@@ -8,15 +8,21 @@ import { StatsSummary } from '@/components/dashboard/StatsSummary';
 import { VolumeChart } from '@/components/dashboard/VolumeChart';
 import { RankingList } from '@/components/dashboard/RankingList';
 
+function getTodayString(): string {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+}
+
 export default function Home() {
-  const [fromDate, setFromDate] = useState('2025-11-01');
-  const [toDate, setToDate] = useState('2025-11-30');
+  const [fromDate, setFromDate] = useState('2026-01-01');
+  const [toDate, setToDate] = useState(getTodayString());
   const [customWallet, setCustomWallet] = useState('');
 
   const [volumeData, setVolumeData] = useState<any>(null);
   const [statsData, setStatsData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState<any>(null);
 
   const fetchData = async (overrides?: { from?: string; to?: string; wallet?: string }) => {
     setLoading(true);
@@ -61,9 +67,23 @@ export default function Home() {
     }
   };
 
+  // Fetch sync status
+  const fetchSyncStatus = async () => {
+    try {
+      const response = await fetch('/api/sync-status');
+      if (response.ok) {
+        const data = await response.json();
+        setSyncStatus(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch sync status:', err);
+    }
+  };
+
   // Fetch data on mount
   useEffect(() => {
     fetchData();
+    fetchSyncStatus();
   }, []);
 
   const handleDateChange = (from: string, to: string) => {
@@ -150,10 +170,18 @@ export default function Home() {
       )}
 
       {/* Footer */}
-      <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
+      <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground space-y-2">
         <p>
           Data from Hyperliquid OUTKAST Builder •{' '}
           Updates every 4 hours via Vercel Cron
+        </p>
+        {syncStatus?.lastSyncCompletedAt && (
+          <p>
+            Last sync completed: {new Date(syncStatus.lastSyncCompletedAt).toISOString().replace('T', ' ').substring(0, 19)} UTC
+          </p>
+        )}
+        <p className="text-xs">
+          Note: Trade data from Hyperliquid may be delayed by 1-2 days due to API limitations
         </p>
       </div>
     </main>

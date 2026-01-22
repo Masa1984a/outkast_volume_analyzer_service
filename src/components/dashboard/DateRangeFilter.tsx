@@ -8,9 +8,14 @@ interface DateRangeFilterProps {
   onDateChange: (from: string, to: string) => void;
 }
 
+function getTodayString(): string {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+}
+
 export function DateRangeFilter({ onDateChange }: DateRangeFilterProps) {
-  const [fromDate, setFromDate] = useState('2025-11-01');
-  const [toDate, setToDate] = useState('2025-11-30');
+  const [fromDate, setFromDate] = useState('2026-01-01');
+  const [toDate, setToDate] = useState(getTodayString());
 
   const handleApply = () => {
     onDateChange(fromDate, toDate);
