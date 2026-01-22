@@ -15,8 +15,11 @@ export async function fetchBuilderFills(
 ): Promise<string | null> {
   const { builderAddress, date } = options;
 
-  // Construct URL: https://stats-data.hyperliquid.xyz/Mainnet/builder_fills/0x.../2025-11-01.csv.lz4
-  const url = `${CONFIG.HYPERLIQUID_BASE_URL}/${builderAddress}/${date}.csv.lz4`;
+  // Convert date from YYYY-MM-DD to YYYYMMDD format
+  const dateFormatted = date.replace(/-/g, '');
+
+  // Construct URL: https://stats-data.hyperliquid.xyz/Mainnet/builder_fills/0x.../20251101.csv.lz4
+  const url = `${CONFIG.HYPERLIQUID_BASE_URL}/${builderAddress}/${dateFormatted}.csv.lz4`;
 
   console.log(`Fetching fills from: ${url}`);
 
