@@ -32,34 +32,43 @@ export function DateRangeFilter({ onDateChange }: DateRangeFilterProps) {
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-4 items-end">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="from-date" className="text-sm font-medium">
-            From
-          </label>
-          <Input
-            id="from-date"
-            type="date"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            className="w-40"
-          />
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* Date inputs container */}
+        <div className="flex gap-4 items-end flex-1">
+          <div className="flex flex-col gap-2 flex-1 sm:flex-initial">
+            <label htmlFor="from-date" className="text-sm font-medium">
+              From
+            </label>
+            <Input
+              id="from-date"
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              className="w-full sm:w-40"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2 flex-1 sm:flex-initial">
+            <label htmlFor="to-date" className="text-sm font-medium">
+              To
+            </label>
+            <Input
+              id="to-date"
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="w-full sm:w-40"
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="to-date" className="text-sm font-medium">
-            To
-          </label>
-          <Input
-            id="to-date"
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            className="w-40"
-          />
-        </div>
-
-        <Button onClick={handleApply}>Apply</Button>
+        {/* Apply button - full width on mobile, auto on desktop */}
+        <Button
+          onClick={handleApply}
+          className="w-full sm:w-auto sm:self-end"
+        >
+          Apply
+        </Button>
       </div>
 
       {error && (
