@@ -7,6 +7,7 @@ import { WalletInput } from '@/components/dashboard/WalletInput';
 import { StatsSummary } from '@/components/dashboard/StatsSummary';
 import { VolumeChart } from '@/components/dashboard/VolumeChart';
 import { RankingList } from '@/components/dashboard/RankingList';
+import { ReferralSection } from '@/components/dashboard/ReferralSection';
 
 function getTodayString(): string {
   const today = new Date();
@@ -168,6 +169,9 @@ export default function Home() {
           />
         </div>
       )}
+
+      {/* Referral Section */}
+      <ReferralSection />
 
       {/* Footer */}
       <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground space-y-2">
