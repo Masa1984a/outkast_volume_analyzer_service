@@ -238,12 +238,23 @@ export async function updateSyncStatus(
     errorMessage,
   } = status;
 
+  // Convert Date objects to ISO strings for SQL
+  const syncedDate = lastSyncedDate instanceof Date
+    ? lastSyncedDate.toISOString()
+    : lastSyncedDate || null;
+  const startedAt = lastSyncStartedAt instanceof Date
+    ? lastSyncStartedAt.toISOString()
+    : lastSyncStartedAt || null;
+  const completedAt = lastSyncCompletedAt instanceof Date
+    ? lastSyncCompletedAt.toISOString()
+    : lastSyncCompletedAt || null;
+
   await sql`
     UPDATE sync_status
     SET
-      last_synced_date = COALESCE(${lastSyncedDate || null}, last_synced_date),
-      last_sync_started_at = COALESCE(${lastSyncStartedAt || null}, last_sync_started_at),
-      last_sync_completed_at = COALESCE(${lastSyncCompletedAt || null}, last_sync_completed_at),
+      last_synced_date = COALESCE(${syncedDate}, last_synced_date),
+      last_sync_started_at = COALESCE(${startedAt}, last_sync_started_at),
+      last_sync_completed_at = COALESCE(${completedAt}, last_sync_completed_at),
       last_sync_status = COALESCE(${lastSyncStatus || null}, last_sync_status),
       error_message = ${errorMessage || null},
       updated_at = NOW()
