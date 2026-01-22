@@ -27,6 +27,7 @@ export async function upsertFills(fills: Fill[]): Promise<void> {
       twapId,
       builderFee,
       rawDataJson,
+      dataHash,
     } = fill;
 
     return `(
@@ -45,7 +46,8 @@ export async function upsertFills(fills: Fill[]): Promise<void> {
       ${closedPnl ?? 'NULL'},
       ${twapId ?? 'NULL'},
       ${builderFee ?? 'NULL'},
-      ${rawDataJson ? `'${JSON.stringify(rawDataJson)}'::jsonb` : 'NULL'}
+      ${rawDataJson ? `'${JSON.stringify(rawDataJson)}'::jsonb` : 'NULL'},
+      '${dataHash}'
     )`;
   }).join(',\n');
 
@@ -53,9 +55,9 @@ export async function upsertFills(fills: Fill[]): Promise<void> {
     INSERT INTO fills (
       transaction_time, date_str, user_address, coin, side, px, sz,
       crossed, special_trade_type, tif, is_trigger, counterparty,
-      closed_pnl, twap_id, builder_fee, raw_data_json
+      closed_pnl, twap_id, builder_fee, raw_data_json, data_hash
     ) VALUES ${values}
-    ON CONFLICT (transaction_time, user_address, coin, side, px, sz) DO NOTHING
+    ON CONFLICT (data_hash) DO NOTHING
   `;
 
   await sql.query(query);

@@ -20,8 +20,9 @@ CREATE TABLE IF NOT EXISTS fills (
   twap_id BIGINT,
   builder_fee NUMERIC(20, 8),
   raw_data_json JSONB,
+  data_hash VARCHAR(64) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE(transaction_time, user_address, coin, side, px, sz)
+  UNIQUE(data_hash)
 );
 
 -- Indexes for fills table

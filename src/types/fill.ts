@@ -17,6 +17,7 @@ export interface Fill {
   twapId?: bigint;
   builderFee?: number;
   rawDataJson?: Record<string, any>;
+  dataHash: string;
   createdAt?: Date;
 }
 

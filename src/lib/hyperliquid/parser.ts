@@ -1,5 +1,15 @@
 import { parse } from 'csv-parse/sync';
+import { createHash } from 'crypto';
 import { Fill, FillCSVRow } from '@/types/fill';
+
+/**
+ * Calculate SHA-256 hash of the raw CSV row data
+ */
+function calculateDataHash(row: FillCSVRow): string {
+  // Create a deterministic string from all row data
+  const dataString = JSON.stringify(row, Object.keys(row).sort());
+  return createHash('sha256').update(dataString).digest('hex');
+}
 
 /**
  * Parse CSV content and convert to Fill objects
@@ -39,6 +49,7 @@ export function parseCSVToFills(csvContent: string, dateStr: string): Fill[] {
         twapId: row.twapId ? BigInt(row.twapId) : undefined,
         builderFee: row.builderFee ? parseFloat(row.builderFee) : undefined,
         rawDataJson: row,
+        dataHash: calculateDataHash(row),
       };
 
       return fill;
