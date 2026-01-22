@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { QRCodeSVG } from 'react-qr-code';
+import QRCode from 'react-qr-code';
 
 interface ReferralLinkProps {
   title: string;
@@ -13,7 +13,7 @@ function ReferralLink({ title, url }: ReferralLinkProps) {
     <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
       {/* QR Code */}
       <div className="flex-shrink-0 p-2 bg-white rounded">
-        <QRCodeSVG value={url} size={80} />
+        <QRCode value={url} size={80} />
       </div>
 
       {/* Text Content */}

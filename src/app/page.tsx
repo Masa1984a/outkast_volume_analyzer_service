@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DateRangeFilter } from '@/components/dashboard/DateRangeFilter';
 import { WalletInput } from '@/components/dashboard/WalletInput';
@@ -25,7 +25,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [syncStatus, setSyncStatus] = useState<any>(null);
 
-  const fetchData = async (overrides?: { from?: string; to?: string; wallet?: string }) => {
+  const fetchData = useCallback(async (overrides?: { from?: string; to?: string; wallet?: string }) => {
     setLoading(true);
     setError(null);
 
@@ -66,7 +66,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [fromDate, toDate, customWallet]);
 
   // Fetch sync status
   const fetchSyncStatus = async () => {
@@ -85,6 +85,7 @@ export default function Home() {
   useEffect(() => {
     fetchData();
     fetchSyncStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDateChange = (from: string, to: string) => {
