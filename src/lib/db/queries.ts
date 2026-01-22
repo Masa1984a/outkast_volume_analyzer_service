@@ -106,7 +106,7 @@ export async function getDailyVolume(
 ): Promise<DailyVolume[]> {
   const result = await sql`
     SELECT
-      date_str as "dateStr",
+      TO_CHAR(date_str, 'YYYY-MM-DD') as "dateStr",
       SUM(volume_usd) as "volumeUsd"
     FROM fills
     WHERE date_str >= ${fromDate} AND date_str <= ${toDate}
@@ -127,7 +127,7 @@ export async function getUserDailyVolume(
   const result = await sql`
     SELECT
       user_address as "userAddress",
-      date_str as "dateStr",
+      TO_CHAR(date_str, 'YYYY-MM-DD') as "dateStr",
       SUM(volume_usd) as "volumeUsd"
     FROM fills
     WHERE date_str >= ${fromDate} AND date_str <= ${toDate}

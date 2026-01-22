@@ -38,11 +38,6 @@ export async function aggregateVolumeData(
   // Get all user daily volumes
   const userDailyVolumes = await getUserDailyVolume(fromDate, toDate);
 
-  console.log(`[Aggregator] getUserDailyVolume returned ${userDailyVolumes.length} records`);
-  if (userDailyVolumes.length > 0) {
-    console.log('[Aggregator] Sample record:', userDailyVolumes[0]);
-  }
-
   // Create map: date -> { wallet -> volume }
   const dateVolumeMap = new Map<string, Map<string, number>>();
 
@@ -56,8 +51,6 @@ export async function aggregateVolumeData(
     const dayMap = dateVolumeMap.get(dateStr)!;
     dayMap.set(userAddress, Number(volumeUsd));
   }
-
-  console.log(`[Aggregator] dateVolumeMap has ${dateVolumeMap.size} dates`);
 
   // Transform to chart data format
   const volumeData: VolumeDataPoint[] = [];
