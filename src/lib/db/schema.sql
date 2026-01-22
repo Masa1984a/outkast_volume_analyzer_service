@@ -43,5 +43,5 @@ CREATE TABLE IF NOT EXISTS sync_status (
 
 -- Insert initial sync status record if not exists
 INSERT INTO sync_status (last_synced_date, last_sync_status, updated_at)
-VALUES ('2020-01-01', 'success', NOW())
-ON CONFLICT DO NOTHING;
+SELECT '2020-01-01', 'success', NOW()
+WHERE NOT EXISTS (SELECT 1 FROM sync_status LIMIT 1);
