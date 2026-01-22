@@ -31,7 +31,7 @@ function ReferralLink({ title, url, description }: ReferralLinkProps) {
           {url}
         </a>
         {description && (
-          <p className="text-sm font-semibold text-foreground mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             {description}
           </p>
         )}
@@ -53,6 +53,7 @@ export function ReferralSection() {
           <ReferralLink
             title="KAST Card"
             url="https://go.kast.xyz/VqVO/SAPPORO"
+            description="Boost with KAST Card. Supercharge your OUTKAST rewards by syncing with the KAST Card."
           />
         </div>
       </CardContent>
