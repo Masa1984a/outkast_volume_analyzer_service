@@ -1,4 +1,4 @@
-import lz4 from 'lz4';
+import lz4 from 'lz4js';
 
 /**
  * Decompress LZ4 compressed buffer
@@ -6,7 +6,12 @@ import lz4 from 'lz4';
  */
 export async function decompressLz4Buffer(compressedData: Buffer): Promise<Buffer> {
   try {
-    const decompressed = lz4.decode(compressedData);
+    // Convert Buffer to Uint8Array for lz4js
+    const compressedArray = new Uint8Array(compressedData);
+
+    // Decompress using lz4js (pure JavaScript implementation)
+    const decompressed = lz4.decompress(compressedArray);
+
     return Buffer.from(decompressed);
   } catch (error) {
     throw new Error(
