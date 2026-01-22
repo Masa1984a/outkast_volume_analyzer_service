@@ -1,8 +1,12 @@
+import { config } from 'dotenv';
 import { CONFIG } from '@/lib/constants/config';
 import { fetchBuilderFills } from '@/lib/hyperliquid/client';
 import { parseBuilderFillsCSV } from '@/lib/hyperliquid/parser';
 import { processFillsFromCSV } from '@/lib/sync/upsert-handler';
 import { sql } from '@vercel/postgres';
+
+// Load environment variables from .env.local
+config({ path: '.env.local' });
 
 /**
  * Generate date range
