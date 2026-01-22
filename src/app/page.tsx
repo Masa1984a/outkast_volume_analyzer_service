@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DateRangeFilter } from '@/components/dashboard/DateRangeFilter';
 import { WalletInput } from '@/components/dashboard/WalletInput';
