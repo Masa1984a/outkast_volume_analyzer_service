@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateRankings } from '@/lib/analytics/ranking';
 
+// Force dynamic rendering - disable caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 /**
  * GET /api/stats
  * Returns statistics and rankings

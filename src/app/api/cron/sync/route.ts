@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { syncBuilderFills } from '@/lib/sync/batch-processor';
 import { CONFIG } from '@/lib/constants/config';
 
+// Force dynamic rendering - disable caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 /**
  * Cron endpoint for syncing builder fills
  * Called by Vercel Cron every 4 hours

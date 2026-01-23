@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { aggregateVolumeData } from '@/lib/analytics/aggregator';
 
+// Force dynamic rendering - disable caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 /**
  * GET /api/data
  * Returns aggregated volume data for charts
