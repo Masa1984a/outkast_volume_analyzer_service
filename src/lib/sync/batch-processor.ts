@@ -70,8 +70,9 @@ export async function syncBuilderFills(): Promise<SyncResult> {
 
     // Process each date
     for (const date of dates) {
+      const dateStartTime = Date.now();
       try {
-        console.log(`\n--- Processing ${date} ---`);
+        console.log(`\n[${date}] 📥 Starting data fetch...`);
 
         // Fetch CSV
         const csvContent = await fetchBuilderFills({
@@ -80,7 +81,8 @@ export async function syncBuilderFills(): Promise<SyncResult> {
         });
 
         if (!csvContent) {
-          console.log(`No data for ${date} (404 - expected for future dates)`);
+          const elapsed = Date.now() - dateStartTime;
+          console.log(`[${date}] ℹ️  No data available (404) - Elapsed: ${elapsed}ms`);
           continue;
         }
 
@@ -94,13 +96,13 @@ export async function syncBuilderFills(): Promise<SyncResult> {
         result.totalFills += inserted;
         result.processedDates++;
 
-        console.log(`✅ ${date}: Processed ${inserted} fills`);
+        const elapsed = Date.now() - dateStartTime;
+        console.log(`[${date}] ✅ SUCCESS - Inserted: ${inserted} fills - Elapsed: ${elapsed}ms`);
       } catch (error) {
-        const errorMsg = `Failed to process ${date}: ${
-          error instanceof Error ? error.message : String(error)
-        }`;
-        console.error(`❌ ${errorMsg}`);
-        result.errors.push(errorMsg);
+        const elapsed = Date.now() - dateStartTime;
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        console.error(`[${date}] ❌ ERROR - ${errorMsg} - Elapsed: ${elapsed}ms`);
+        result.errors.push(`${date}: ${errorMsg}`);
       }
     }
 

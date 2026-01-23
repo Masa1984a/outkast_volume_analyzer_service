@@ -21,39 +21,41 @@ export async function fetchBuilderFills(
   // Construct URL: https://stats-data.hyperliquid.xyz/Mainnet/builder_fills/0x.../20251101.csv.lz4
   const url = `${CONFIG.HYPERLIQUID_BASE_URL}/${builderAddress}/${dateFormatted}.csv.lz4`;
 
-  console.log(`Fetching fills from: ${url}`);
+  console.log(`[${date}] Fetching: ${url}`);
 
   try {
     const response = await fetch(url);
 
     if (response.status === 404) {
-      console.log(`No data found for ${date} (404)`);
+      console.log(`[${date}] Response: 404 Not Found - No data available`);
       return null;
     }
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP ${response.status} ${response.statusText}`);
     }
 
     // Get response as array buffer
     const arrayBuffer = await response.arrayBuffer();
     const compressedBuffer = Buffer.from(arrayBuffer);
 
-    console.log(`Downloaded ${compressedBuffer.length} bytes (compressed)`);
+    console.log(`[${date}] Downloaded: ${compressedBuffer.length.toLocaleString()} bytes (compressed)`);
 
     // Decompress LZ4
     const csvContent = await decompressLz4ToString(compressedBuffer);
 
-    console.log(`Decompressed to ${csvContent.length} bytes`);
+    const lines = csvContent.split('\n').length - 1; // -1 for header
+    console.log(`[${date}] Decompressed: ${csvContent.length.toLocaleString()} bytes (~${lines} rows)`);
 
     return csvContent;
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      console.log(`No data found for ${date}`);
+      console.log(`[${date}] Response: 404 Not Found`);
       return null;
     }
 
-    console.error(`Failed to fetch fills for ${date}:`, error);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error(`[${date}] Fetch failed: ${errorMsg}`);
     throw error;
   }
 }

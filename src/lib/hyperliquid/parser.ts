@@ -71,11 +71,11 @@ export async function parseBuilderFillsCSV(
   csvContent: string,
   date: string
 ): Promise<Fill[]> {
-  console.log(`Parsing CSV for date: ${date}`);
+  console.log(`[${date}] Parsing CSV data...`);
 
   const fills = parseCSVToFills(csvContent, date);
 
-  console.log(`Parsed ${fills.length} fills for ${date}`);
+  console.log(`[${date}] Parsed: ${fills.length} fills`);
 
   return fills;
 }
