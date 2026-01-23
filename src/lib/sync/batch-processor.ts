@@ -68,6 +68,9 @@ export async function syncBuilderFills(): Promise<SyncResult> {
 
     console.log(`Syncing ${dates.length} dates from ${startDate} to ${endDate}`);
 
+    // Track the last date where we successfully got data
+    let lastSuccessfulDate: string | null = null;
+
     // Process each date
     for (const date of dates) {
       const dateStartTime = Date.now();
@@ -96,6 +99,11 @@ export async function syncBuilderFills(): Promise<SyncResult> {
         result.totalFills += inserted;
         result.processedDates++;
 
+        // Update last successful date only if we actually inserted data
+        if (inserted > 0) {
+          lastSuccessfulDate = date;
+        }
+
         const elapsed = Date.now() - dateStartTime;
         console.log(`[${date}] ✅ SUCCESS - Inserted: ${inserted} fills - Elapsed: ${elapsed}ms`);
       } catch (error) {
@@ -107,13 +115,21 @@ export async function syncBuilderFills(): Promise<SyncResult> {
     }
 
     // Update sync status to 'success'
-    const yesterday = getYesterdayUTC();
-    await updateSyncStatus({
-      lastSyncedDate: new Date(yesterday),
+    // Only update last_synced_date if we successfully got data
+    const updateData: any = {
       lastSyncCompletedAt: new Date(),
       lastSyncStatus: 'success',
       errorMessage: result.errors.length > 0 ? result.errors.join('; ') : undefined,
-    });
+    };
+
+    if (lastSuccessfulDate) {
+      updateData.lastSyncedDate = new Date(lastSuccessfulDate);
+      console.log(`\nUpdating last_synced_date to: ${lastSuccessfulDate}`);
+    } else {
+      console.log(`\nNo new data found - keeping last_synced_date: ${syncStatus.lastSyncedDate}`);
+    }
+
+    await updateSyncStatus(updateData);
 
     result.success = true;
 
