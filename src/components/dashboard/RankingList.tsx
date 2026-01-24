@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CHART_COLORS } from '@/lib/constants/colors';
+import { getChartColors } from '@/lib/constants/colors';
+import { useTheme } from '@/components/theme-provider';
 
 interface RankingData {
   address: string;
@@ -26,13 +27,14 @@ function formatVolume(volume: number): string {
   }
 }
 
-function getColorForRank(rank: number): string {
-  if (rank === 1) return CHART_COLORS.top1;
-  if (rank === 2) return CHART_COLORS.top2;
-  if (rank === 3) return CHART_COLORS.top3;
-  if (rank === 4) return CHART_COLORS.top4;
-  if (rank === 5) return CHART_COLORS.top5;
-  return CHART_COLORS.others;
+function getColorForRank(rank: number, isDark: boolean): string {
+  const colors = getChartColors(isDark);
+  if (rank === 1) return colors.top1;
+  if (rank === 2) return colors.top2;
+  if (rank === 3) return colors.top3;
+  if (rank === 4) return colors.top4;
+  if (rank === 5) return colors.top5;
+  return colors.others;
 }
 
 function truncateAddress(address: string): string {
@@ -127,6 +129,10 @@ function ViewDetailsButton({ address }: { address: string }) {
 }
 
 export function RankingList({ topWallets, customWalletStats }: RankingListProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const colors = getChartColors(isDark);
+
   return (
     <Card>
       <CardHeader>
@@ -138,13 +144,13 @@ export function RankingList({ topWallets, customWalletStats }: RankingListProps)
           {customWalletStats && (
             <div
               className="p-4 rounded-lg border-2"
-              style={{ borderColor: CHART_COLORS.custom, backgroundColor: `${CHART_COLORS.custom}10` }}
+              style={{ borderColor: colors.custom, backgroundColor: `${colors.custom}10` }}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                    style={{ backgroundColor: CHART_COLORS.custom }}
+                    style={{ backgroundColor: colors.custom }}
                   >
                     {customWalletStats.rank}
                   </div>
@@ -176,7 +182,7 @@ export function RankingList({ topWallets, customWalletStats }: RankingListProps)
               <div className="flex items-center gap-3">
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                  style={{ backgroundColor: getColorForRank(wallet.rank) }}
+                  style={{ backgroundColor: getColorForRank(wallet.rank, isDark) }}
                 >
                   {wallet.rank}
                 </div>
