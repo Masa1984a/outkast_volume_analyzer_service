@@ -1,8 +1,9 @@
 'use client';
 
 import {
-  BarChart,
+  ComposedChart,
   Bar,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -37,7 +38,7 @@ export function VolumeChart({ data, topWallets, customWallet }: VolumeChartProps
   return (
     <div className="w-full h-[400px]">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data}>
+        <ComposedChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="date"
@@ -46,17 +47,35 @@ export function VolumeChart({ data, topWallets, customWallet }: VolumeChartProps
             textAnchor="end"
             height={80}
           />
+          {/* Left Y-axis for volume */}
           <YAxis
+            yAxisId="left"
             tick={{ fontSize: 12 }}
             tickFormatter={formatValue}
+            label={{ value: 'Volume (USD)', angle: -90, position: 'insideLeft' }}
+          />
+          {/* Right Y-axis for unique wallets */}
+          <YAxis
+            yAxisId="right"
+            orientation="right"
+            tick={{ fontSize: 12 }}
+            label={{ value: 'Unique Wallets', angle: 90, position: 'insideRight' }}
           />
           <Tooltip
-            formatter={(value: number) => formatValue(value)}
+            formatter={(value: number, name: string) => {
+              if (name === 'uniqueWallets') {
+                return [value, 'Unique Wallets'];
+              }
+              return [formatValue(value), name];
+            }}
             labelStyle={{ color: '#000' }}
           />
           <Legend
             wrapperStyle={{ fontSize: '12px' }}
             formatter={(value, entry: any) => {
+              if (value === 'uniqueWallets') {
+                return 'Unique Wallets';
+              }
               if (value === 'custom' && customWallet) {
                 return `Custom: ${formatAddress(customWallet)}`;
               }
@@ -74,18 +93,28 @@ export function VolumeChart({ data, topWallets, customWallet }: VolumeChartProps
           />
 
           {/* Top 5 wallets */}
-          <Bar dataKey="top1" stackId="a" fill={CHART_COLORS.top1} />
-          <Bar dataKey="top2" stackId="a" fill={CHART_COLORS.top2} />
-          <Bar dataKey="top3" stackId="a" fill={CHART_COLORS.top3} />
-          <Bar dataKey="top4" stackId="a" fill={CHART_COLORS.top4} />
-          <Bar dataKey="top5" stackId="a" fill={CHART_COLORS.top5} />
+          <Bar yAxisId="left" dataKey="top1" stackId="a" fill={CHART_COLORS.top1} />
+          <Bar yAxisId="left" dataKey="top2" stackId="a" fill={CHART_COLORS.top2} />
+          <Bar yAxisId="left" dataKey="top3" stackId="a" fill={CHART_COLORS.top3} />
+          <Bar yAxisId="left" dataKey="top4" stackId="a" fill={CHART_COLORS.top4} />
+          <Bar yAxisId="left" dataKey="top5" stackId="a" fill={CHART_COLORS.top5} />
 
           {/* Custom wallet if not in top 5 */}
-          {customWallet && <Bar dataKey="custom" stackId="a" fill={CHART_COLORS.custom} />}
+          {customWallet && <Bar yAxisId="left" dataKey="custom" stackId="a" fill={CHART_COLORS.custom} />}
 
           {/* Others */}
-          <Bar dataKey="others" stackId="a" fill={CHART_COLORS.others} />
-        </BarChart>
+          <Bar yAxisId="left" dataKey="others" stackId="a" fill={CHART_COLORS.others} />
+
+          {/* Unique wallets line */}
+          <Line
+            yAxisId="right"
+            type="monotone"
+            dataKey="uniqueWallets"
+            stroke="#FF8042"
+            strokeWidth={2}
+            dot={{ r: 4 }}
+          />
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   );

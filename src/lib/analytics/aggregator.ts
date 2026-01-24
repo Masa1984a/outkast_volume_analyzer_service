@@ -2,6 +2,7 @@ import {
   getUserDailyVolume,
   getTopWallets,
   getWalletStats,
+  getDailyUniqueWallets,
 } from '@/lib/db/queries';
 import { VolumeDataPoint } from '@/types/api';
 import { CONFIG } from '@/lib/constants/config';
@@ -37,6 +38,13 @@ export async function aggregateVolumeData(
 
   // Get all user daily volumes
   const userDailyVolumes = await getUserDailyVolume(fromDate, toDate);
+
+  // Get daily unique wallet counts
+  const dailyUniqueWallets = await getDailyUniqueWallets(fromDate, toDate);
+  const uniqueWalletsMap = new Map<string, number>();
+  for (const record of dailyUniqueWallets) {
+    uniqueWalletsMap.set(record.dateStr, Number(record.uniqueWallets));
+  }
 
   // Create map: date -> { wallet -> volume }
   const dateVolumeMap = new Map<string, Map<string, number>>();
@@ -89,6 +97,9 @@ export async function aggregateVolumeData(
     }
 
     dataPoint['others'] = othersVolume;
+
+    // Add unique wallet count for the day
+    dataPoint['uniqueWallets'] = uniqueWalletsMap.get(date) || 0;
 
     volumeData.push(dataPoint);
   }

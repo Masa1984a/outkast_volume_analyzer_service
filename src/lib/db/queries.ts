@@ -189,6 +189,26 @@ export async function getWalletStats(
 }
 
 /**
+ * Get daily unique wallet count
+ */
+export async function getDailyUniqueWallets(
+  fromDate: string,
+  toDate: string
+): Promise<{ dateStr: string; uniqueWallets: number }[]> {
+  const result = await sql`
+    SELECT
+      TO_CHAR(date_str, 'YYYY-MM-DD') as "dateStr",
+      COUNT(DISTINCT user_address) as "uniqueWallets"
+    FROM fills
+    WHERE date_str >= ${fromDate} AND date_str <= ${toDate}
+    GROUP BY date_str
+    ORDER BY date_str ASC
+  `;
+
+  return result.rows as { dateStr: string; uniqueWallets: number }[];
+}
+
+/**
  * Get total statistics
  */
 export async function getTotalStats(fromDate: string, toDate: string) {
