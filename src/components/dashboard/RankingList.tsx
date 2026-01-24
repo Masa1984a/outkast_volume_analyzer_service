@@ -95,6 +95,37 @@ function CopyButton({ address }: { address: string }) {
   );
 }
 
+function ViewDetailsButton({ address }: { address: string }) {
+  const detailsUrl = `https://app.coinmarketman.com/hypertracker/wallet/${address}`;
+
+  return (
+    <a
+      href={detailsUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="ml-1 p-1.5 rounded hover:bg-muted transition-colors inline-flex items-center"
+      title="View details on Coin Market Manager"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="text-muted-foreground"
+      >
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+        <polyline points="15 3 21 3 21 9" />
+        <line x1="10" y1="14" x2="21" y2="3" />
+      </svg>
+    </a>
+  );
+}
+
 export function RankingList({ topWallets, customWalletStats }: RankingListProps) {
   return (
     <Card>
@@ -121,6 +152,7 @@ export function RankingList({ topWallets, customWalletStats }: RankingListProps)
                     <div className="font-mono text-sm font-medium flex items-center">
                       {truncateAddress(customWalletStats.address)}
                       <CopyButton address={customWalletStats.address} />
+                      <ViewDetailsButton address={customWalletStats.address} />
                     </div>
                     <div className="text-xs text-muted-foreground">Custom Wallet</div>
                   </div>
@@ -151,6 +183,7 @@ export function RankingList({ topWallets, customWalletStats }: RankingListProps)
                 <div className="font-mono text-sm flex items-center">
                   {truncateAddress(wallet.address)}
                   <CopyButton address={wallet.address} />
+                  <ViewDetailsButton address={wallet.address} />
                 </div>
               </div>
               <div className="text-right">
