@@ -10,6 +10,7 @@ import { StatsSummary } from '@/components/dashboard/StatsSummary';
 import { VolumeChart } from '@/components/dashboard/VolumeChart';
 import { RankingList } from '@/components/dashboard/RankingList';
 import { ReferralSection } from '@/components/dashboard/ReferralSection';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 function getTodayString(): string {
   const today = new Date();
@@ -125,11 +126,14 @@ export default function Home() {
   return (
     <main className="min-h-screen p-4 md:p-8 bg-background">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">OUTKAST Volume Dashboard</h1>
-        <p className="text-muted-foreground">
-          Hyperliquid OUTKAST Builder trading volume analytics
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-4xl font-bold mb-2">OUTKAST Volume Dashboard</h1>
+          <p className="text-muted-foreground">
+            Hyperliquid OUTKAST Builder trading volume analytics
+          </p>
+        </div>
+        <ThemeToggle />
       </div>
 
       {/* Filters */}

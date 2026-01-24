@@ -11,8 +11,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { CHART_COLORS } from '@/lib/constants/colors';
+import { getChartColors } from '@/lib/constants/colors';
 import { VolumeDataPoint } from '@/types/api';
+import { useTheme } from '@/components/theme-provider';
 
 interface VolumeChartProps {
   data: VolumeDataPoint[];
@@ -35,31 +36,38 @@ function formatValue(value: number): string {
 }
 
 export function VolumeChart({ data, topWallets, customWallet }: VolumeChartProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const colors = getChartColors(isDark);
+
   return (
     <div className="w-full h-[400px]">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke={colors.gridLines} />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12, fill: isDark ? '#E5E7EB' : '#374151' }}
             angle={-45}
             textAnchor="end"
             height={80}
+            stroke={isDark ? '#E5E7EB' : '#374151'}
           />
           {/* Left Y-axis for volume */}
           <YAxis
             yAxisId="left"
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12, fill: isDark ? '#E5E7EB' : '#374151' }}
             tickFormatter={formatValue}
-            label={{ value: 'Volume (USD)', angle: -90, position: 'insideLeft' }}
+            label={{ value: 'Volume (USD)', angle: -90, position: 'insideLeft', fill: isDark ? '#E5E7EB' : '#374151' }}
+            stroke={isDark ? '#E5E7EB' : '#374151'}
           />
           {/* Right Y-axis for unique wallets */}
           <YAxis
             yAxisId="right"
             orientation="right"
-            tick={{ fontSize: 12 }}
-            label={{ value: 'Unique Wallets', angle: 90, position: 'insideRight' }}
+            tick={{ fontSize: 12, fill: isDark ? '#E5E7EB' : '#374151' }}
+            label={{ value: 'Unique Wallets', angle: 90, position: 'insideRight', fill: isDark ? '#E5E7EB' : '#374151' }}
+            stroke={isDark ? '#E5E7EB' : '#374151'}
           />
           <Tooltip
             formatter={(value: number, name: string) => {
@@ -68,10 +76,16 @@ export function VolumeChart({ data, topWallets, customWallet }: VolumeChartProps
               }
               return [formatValue(value), name];
             }}
-            labelStyle={{ color: '#000' }}
+            contentStyle={{
+              backgroundColor: isDark ? '#1F2937' : '#FFFFFF',
+              border: `1px solid ${isDark ? '#374151' : '#E5E7EB'}`,
+              borderRadius: '6px',
+            }}
+            labelStyle={{ color: isDark ? '#E5E7EB' : '#111827' }}
+            itemStyle={{ color: isDark ? '#E5E7EB' : '#374151' }}
           />
           <Legend
-            wrapperStyle={{ fontSize: '12px' }}
+            wrapperStyle={{ fontSize: '12px', color: isDark ? '#E5E7EB' : '#374151' }}
             formatter={(value, entry: any) => {
               if (value === 'uniqueWallets') {
                 return 'Unique Wallets';
@@ -93,24 +107,24 @@ export function VolumeChart({ data, topWallets, customWallet }: VolumeChartProps
           />
 
           {/* Top 5 wallets */}
-          <Bar yAxisId="left" dataKey="top1" stackId="a" fill={CHART_COLORS.top1} />
-          <Bar yAxisId="left" dataKey="top2" stackId="a" fill={CHART_COLORS.top2} />
-          <Bar yAxisId="left" dataKey="top3" stackId="a" fill={CHART_COLORS.top3} />
-          <Bar yAxisId="left" dataKey="top4" stackId="a" fill={CHART_COLORS.top4} />
-          <Bar yAxisId="left" dataKey="top5" stackId="a" fill={CHART_COLORS.top5} />
+          <Bar yAxisId="left" dataKey="top1" stackId="a" fill={colors.top1} />
+          <Bar yAxisId="left" dataKey="top2" stackId="a" fill={colors.top2} />
+          <Bar yAxisId="left" dataKey="top3" stackId="a" fill={colors.top3} />
+          <Bar yAxisId="left" dataKey="top4" stackId="a" fill={colors.top4} />
+          <Bar yAxisId="left" dataKey="top5" stackId="a" fill={colors.top5} />
 
           {/* Custom wallet if not in top 5 */}
-          {customWallet && <Bar yAxisId="left" dataKey="custom" stackId="a" fill={CHART_COLORS.custom} />}
+          {customWallet && <Bar yAxisId="left" dataKey="custom" stackId="a" fill={colors.custom} />}
 
           {/* Others */}
-          <Bar yAxisId="left" dataKey="others" stackId="a" fill={CHART_COLORS.others} />
+          <Bar yAxisId="left" dataKey="others" stackId="a" fill={colors.others} />
 
           {/* Unique wallets line */}
           <Line
             yAxisId="right"
             type="monotone"
             dataKey="uniqueWallets"
-            stroke="#FF8042"
+            stroke={colors.uniqueWallets}
             strokeWidth={2}
             dot={{ r: 4 }}
           />
