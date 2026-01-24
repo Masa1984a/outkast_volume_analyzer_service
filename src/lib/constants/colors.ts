@@ -6,7 +6,7 @@ export const CHART_COLORS_DARK = {
   top4: '#A855F7',    // Purple
   top5: '#FF6B6B',    // Coral
   others: '#6B7280',  // Medium Gray
-  custom: '#FFFF00',  // Yellow (Custom wallet)
+  custom: '#FF8800',  // Orange (Custom wallet)
   uniqueWallets: '#B8FF00', // Lime Green for line
   background: '#0F0F0F',    // Dark Black
   gridLines: '#2A2A2A',     // Dark Gray
@@ -20,7 +20,7 @@ export const CHART_COLORS_LIGHT = {
   top4: '#8B5CF6',    // Violet
   top5: '#F43F5E',    // Rose
   others: '#9CA3AF',  // Gray
-  custom: '#FF0000',  // Red (Custom wallet)
+  custom: '#FF8800',  // Orange (Custom wallet)
   uniqueWallets: '#65A30D', // Dark Green for line
   background: '#FAFAFA',    // Off White
   gridLines: '#E5E7EB',     // Light Gray
