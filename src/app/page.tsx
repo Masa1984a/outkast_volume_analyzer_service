@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DateRangeFilter } from '@/components/dashboard/DateRangeFilter';
@@ -16,6 +17,9 @@ function getTodayString(): string {
 }
 
 export default function Home() {
+  // Filter panel toggle
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
+
   // Filter inputs (temporary, not yet applied)
   const [inputFromDate, setInputFromDate] = useState('2026-01-01');
   const [inputToDate, setInputToDate] = useState(getTodayString());
@@ -132,27 +136,43 @@ export default function Home() {
       <div className="mb-8 space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Filters</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <DateRangeFilter
-              fromDate={inputFromDate}
-              toDate={inputToDate}
-              onFromDateChange={setInputFromDate}
-              onToDateChange={setInputToDate}
-              error={dateError}
-            />
-            <WalletInput
-              wallet={inputWallet}
-              onWalletChange={setInputWallet}
-              onClear={handleClearWallet}
-            />
-            <div className="pt-2">
-              <Button onClick={handleApplyFilters} className="w-full sm:w-auto">
-                Apply Filters
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Filters</CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className="h-8 w-8 p-0"
+              >
+                {isFilterOpen ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
               </Button>
             </div>
-          </CardContent>
+          </CardHeader>
+          {isFilterOpen && (
+            <CardContent className="space-y-4">
+              <DateRangeFilter
+                fromDate={inputFromDate}
+                toDate={inputToDate}
+                onFromDateChange={setInputFromDate}
+                onToDateChange={setInputToDate}
+                error={dateError}
+              />
+              <WalletInput
+                wallet={inputWallet}
+                onWalletChange={setInputWallet}
+                onClear={handleClearWallet}
+              />
+              <div className="pt-2">
+                <Button onClick={handleApplyFilters} className="w-full sm:w-auto">
+                  Apply Filters
+                </Button>
+              </div>
+            </CardContent>
+          )}
         </Card>
       </div>
 
