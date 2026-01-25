@@ -13,6 +13,10 @@ export interface StatsData {
   totalTrades: number;
   uniqueWallets: number;
   avgDailyVolume: number;
+  totalVolumeChange?: number;
+  totalTradesChange?: number;
+  uniqueWalletsChange?: number;
+  avgDailyVolumeChange?: number;
   topWallets: RankingData[];
   customWalletStats?: RankingData;
 }
@@ -32,7 +36,7 @@ export async function calculateRankings(
     CONFIG.TOP_WALLETS_COUNT
   );
 
-  // Get total stats
+  // Get total stats for current period
   const totalStats = await getTotalStats(fromDate, toDate);
 
   const totalVolume = Number(totalStats.totalVolume || 0);
@@ -40,6 +44,32 @@ export async function calculateRankings(
   const uniqueWallets = Number(totalStats.uniqueWallets || 0);
   const tradingDays = Number(totalStats.tradingDays || 1);
   const avgDailyVolume = totalVolume / tradingDays;
+
+  // Calculate previous period stats (From to To-1day) for comparison
+  let totalVolumeChange: number | undefined;
+  let totalTradesChange: number | undefined;
+  let uniqueWalletsChange: number | undefined;
+  let avgDailyVolumeChange: number | undefined;
+
+  const toDateObj = new Date(toDate);
+  const prevToDate = new Date(toDateObj);
+  prevToDate.setDate(prevToDate.getDate() - 1);
+  const prevToDateStr = prevToDate.toISOString().split('T')[0];
+
+  // Only calculate changes if there's at least 2 days of data
+  if (new Date(fromDate) < new Date(prevToDateStr)) {
+    const prevStats = await getTotalStats(fromDate, prevToDateStr);
+    const prevTotalVolume = Number(prevStats.totalVolume || 0);
+    const prevTotalTrades = Number(prevStats.totalTrades || 0);
+    const prevUniqueWallets = Number(prevStats.uniqueWallets || 0);
+    const prevTradingDays = Number(prevStats.tradingDays || 1);
+    const prevAvgDailyVolume = prevTotalVolume / prevTradingDays;
+
+    totalVolumeChange = totalVolume - prevTotalVolume;
+    totalTradesChange = totalTrades - prevTotalTrades;
+    uniqueWalletsChange = uniqueWallets - prevUniqueWallets;
+    avgDailyVolumeChange = avgDailyVolume - prevAvgDailyVolume;
+  }
 
   // Format top wallets
   const topWallets: RankingData[] = topWalletsData.map((wallet) => ({
@@ -74,6 +104,10 @@ export async function calculateRankings(
     totalTrades,
     uniqueWallets,
     avgDailyVolume,
+    totalVolumeChange,
+    totalTradesChange,
+    uniqueWalletsChange,
+    avgDailyVolumeChange,
     topWallets,
     customWalletStats,
   };

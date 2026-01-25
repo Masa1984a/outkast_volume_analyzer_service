@@ -203,6 +203,10 @@ export default function Home() {
             totalTrades={statsData.totalTrades}
             uniqueWallets={statsData.uniqueWallets}
             avgDailyVolume={statsData.avgDailyVolume}
+            totalVolumeChange={statsData.totalVolumeChange}
+            totalTradesChange={statsData.totalTradesChange}
+            uniqueWalletsChange={statsData.uniqueWalletsChange}
+            avgDailyVolumeChange={statsData.avgDailyVolumeChange}
           />
 
           {/* Volume Chart */}
