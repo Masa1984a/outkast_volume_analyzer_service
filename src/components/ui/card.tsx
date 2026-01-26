@@ -5,16 +5,43 @@ import { cn } from "@/lib/utils"
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
-      className
-    )}
-    {...props}
-  />
-))
+>(({ className, ...props }, ref) => {
+  // Extract margin classes from className and apply to outer wrapper
+  const marginClasses = className?.split(' ').filter(c =>
+    c.startsWith('m-') || c.startsWith('mt-') || c.startsWith('mb-') ||
+    c.startsWith('ml-') || c.startsWith('mr-') || c.startsWith('mx-') ||
+    c.startsWith('my-')
+  ).join(' ') || '';
+
+  // Keep other classes for inner div
+  const otherClasses = className?.split(' ').filter(c =>
+    !(c.startsWith('m-') || c.startsWith('mt-') || c.startsWith('mb-') ||
+      c.startsWith('ml-') || c.startsWith('mr-') || c.startsWith('mx-') ||
+      c.startsWith('my-'))
+  ).join(' ') || '';
+
+  return (
+    <div
+      className={cn(
+        // Gradient border wrapper for dark mode
+        "p-[2px] rounded-lg",
+        "dark:bg-gradient-to-br dark:from-emerald-400 dark:via-green-500 dark:to-teal-600",
+        marginClasses
+      )}
+    >
+      <div
+        ref={ref}
+        className={cn(
+          "rounded-lg bg-card text-card-foreground shadow-sm",
+          "border border-border",
+          "dark:border-transparent",
+          otherClasses
+        )}
+        {...props}
+      />
+    </div>
+  );
+})
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<

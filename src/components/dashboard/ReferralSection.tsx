@@ -42,21 +42,23 @@ function ReferralLink({ title, url, description }: ReferralLinkProps) {
 
 export function ReferralSection() {
   return (
-    <Card className="mt-8">
-      <CardContent className="pt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ReferralLink
-            title="OUTKAST"
-            url="https://go.outkast.xyz/yvtp/SAPPORO"
-            description="Data shows competition is still low. Best time to join is NOW."
-          />
-          <ReferralLink
-            title="KAST Card"
-            url="https://go.kast.xyz/VqVO/SAPPORO"
-            description="Boost with KAST Card. Supercharge your OUTKAST rewards by syncing with the KAST Card."
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <div className="mt-8">
+      <Card>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ReferralLink
+              title="OUTKAST"
+              url="https://go.outkast.xyz/yvtp/SAPPORO"
+              description="Data shows competition is still low. Best time to join is NOW."
+            />
+            <ReferralLink
+              title="KAST Card"
+              url="https://go.kast.xyz/VqVO/SAPPORO"
+              description="Boost with KAST Card. Supercharge your OUTKAST rewards by syncing with the KAST Card."
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
