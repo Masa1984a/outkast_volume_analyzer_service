@@ -25,7 +25,7 @@ const Card = React.forwardRef<
       className={cn(
         // Gradient border wrapper for dark mode
         "p-[2px] rounded-lg",
-        "dark:bg-gradient-to-br dark:from-emerald-400 dark:via-green-500 dark:to-teal-600",
+        "dark:bg-[linear-gradient(to_bottom_right,#369C76,#39EB6E,#369976)]",
         marginClasses
       )}
     >
@@ -34,7 +34,7 @@ const Card = React.forwardRef<
         className={cn(
           "rounded-lg bg-card text-card-foreground shadow-sm",
           "border border-border",
-          "dark:border-transparent",
+          "dark:border-transparent dark:shadow-none",
           otherClasses
         )}
         {...props}
