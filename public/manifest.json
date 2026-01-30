@@ -1,6 +1,6 @@
 {
   "name": "OUTKAST Volume Dashboard",
-  "short_name": "OUTKAST",
+  "short_name": "OUTKAST volume analytics",
   "description": "Hyperliquid OUTKAST Builder trading volume analytics",
   "start_url": "/",
   "display": "standalone",
