@@ -27,6 +27,8 @@ export async function upsertFills(fills: Fill[]): Promise<void> {
       twapId,
       builderFee,
       rawDataJson,
+      originalDataHash,
+      sequenceNumber,
       dataHash,
     } = fill;
 
@@ -47,7 +49,9 @@ export async function upsertFills(fills: Fill[]): Promise<void> {
       ${twapId ?? 'NULL'},
       ${builderFee ?? 'NULL'},
       ${rawDataJson ? `'${JSON.stringify(rawDataJson)}'::jsonb` : 'NULL'},
-      '${dataHash}'
+      '${originalDataHash}',
+      ${sequenceNumber},
+      ${dataHash ? `'${dataHash}'` : 'NULL'}
     )`;
   }).join(',\n');
 
@@ -55,9 +59,10 @@ export async function upsertFills(fills: Fill[]): Promise<void> {
     INSERT INTO fills (
       transaction_time, date_str, user_address, coin, side, px, sz,
       crossed, special_trade_type, tif, is_trigger, counterparty,
-      closed_pnl, twap_id, builder_fee, raw_data_json, data_hash
+      closed_pnl, twap_id, builder_fee, raw_data_json,
+      original_data_hash, sequence_number, data_hash
     ) VALUES ${values}
-    ON CONFLICT (data_hash) DO NOTHING
+    ON CONFLICT (original_data_hash, sequence_number) DO NOTHING
   `;
 
   await sql.query(query);
@@ -90,10 +95,13 @@ export async function getFillsByDateRange(
       twap_id as "twapId",
       builder_fee as "builderFee",
       raw_data_json as "rawDataJson",
+      original_data_hash as "originalDataHash",
+      sequence_number as "sequenceNumber",
+      data_hash as "dataHash",
       created_at as "createdAt"
     FROM fills
     WHERE date_str >= ${fromDate} AND date_str <= ${toDate}
-    ORDER BY transaction_time DESC
+    ORDER BY transaction_time DESC, sequence_number ASC
   `;
 
   return result.rows as Fill[];

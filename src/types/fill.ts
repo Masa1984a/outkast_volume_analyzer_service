@@ -17,7 +17,9 @@ export interface Fill {
   twapId?: bigint;
   builderFee?: number;
   rawDataJson?: Record<string, any>;
-  dataHash: string;
+  originalDataHash: string;       // 元データのハッシュ（枝番を除く）
+  sequenceNumber: number;         // 枝番（1, 2, 3...）
+  dataHash?: string;              // 下位互換のため残す（後で削除可能）
   createdAt?: Date;
 }
 

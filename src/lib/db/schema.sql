@@ -20,9 +20,11 @@ CREATE TABLE IF NOT EXISTS fills (
   twap_id BIGINT,
   builder_fee NUMERIC(20, 8),
   raw_data_json JSONB,
-  data_hash VARCHAR(64) NOT NULL,
+  original_data_hash VARCHAR(64) NOT NULL,  -- 元データのハッシュ（枝番を除く）
+  sequence_number INT NOT NULL DEFAULT 1,   -- 枝番（1, 2, 3...）
+  data_hash VARCHAR(64),                    -- 下位互換のため残す（後で削除可能）
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE(data_hash)
+  UNIQUE(original_data_hash, sequence_number)
 );
 
 -- Indexes for fills table
@@ -30,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_fills_date_str ON fills(date_str DESC);
 CREATE INDEX IF NOT EXISTS idx_fills_user_address ON fills(user_address);
 CREATE INDEX IF NOT EXISTS idx_fills_date_user ON fills(date_str DESC, user_address);
 CREATE INDEX IF NOT EXISTS idx_fills_transaction_time ON fills(transaction_time DESC);
+CREATE INDEX IF NOT EXISTS idx_fills_original_data_hash ON fills(original_data_hash);
 
 -- Table: sync_status (synchronization tracking)
 CREATE TABLE IF NOT EXISTS sync_status (
