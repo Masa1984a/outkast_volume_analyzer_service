@@ -31,8 +31,8 @@ export function parseCSVToFills(csvContent: string, dateStr: string): Fill[] {
 
     // Convert to Fill objects with sequence number assignment
     const fills: Fill[] = records.map((row) => {
-      // Parse time (milliseconds since epoch)
-      const transactionTime = new Date(parseInt(row.time));
+      // Parse time (ISO 8601 string format)
+      const transactionTime = new Date(row.time);
 
       // Parse boolean values
       const crossed = row.crossed === 'true' || row.crossed === 'True';
