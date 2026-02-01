@@ -2,6 +2,8 @@ import { sql } from './client';
 import { Fill, DailyVolume, UserDailyVolume } from '@/types/fill';
 import { WalletVolume } from '@/types/wallet';
 import { SyncStatus } from '@/types/api';
+import { put } from '@vercel/blob';
+import { randomUUID } from 'crypto';
 
 /**
  * Insert or update fills (batch upsert)
@@ -64,6 +66,24 @@ export async function upsertFills(fills: Fill[]): Promise<void> {
     ) VALUES ${values}
     ON CONFLICT (original_data_hash, sequence_number) DO NOTHING
   `;
+
+  // Debug: SQL文をVercel Blobに出力（開発・デバッグ用）
+  try {
+    const timestamp = Date.now();
+    const uuid = randomUUID();
+    const filename = `debug/upsert_query_${timestamp}_${uuid}.sql`;
+
+    const blob = await put(filename, query, {
+      access: 'public',
+    });
+
+    console.log(`[DEBUG] SQL query uploaded to Blob: ${blob.url}`);
+    console.log(`[DEBUG] Query length: ${query.length} characters`);
+    console.log(`[DEBUG] Number of rows: ${fills.length}`);
+  } catch (err) {
+    console.error('[DEBUG] Failed to upload SQL to Blob:', err);
+    // Blob失敗時は処理を続行（本来のUpsert処理に影響させない）
+  }
 
   await sql.query(query);
 }
