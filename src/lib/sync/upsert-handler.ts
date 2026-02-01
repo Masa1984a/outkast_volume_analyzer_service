@@ -3,8 +3,9 @@ import { upsertFills } from '@/lib/db/queries';
 
 /**
  * Batch size for database upserts
+ * Reduced to 10 to avoid timeout issues with large SQL statements
  */
-const BATCH_SIZE = 1000;
+const BATCH_SIZE = 10;
 
 /**
  * Upsert fills in batches to avoid overwhelming the database
