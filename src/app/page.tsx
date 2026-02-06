@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, Check, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DateRangeFilter } from '@/components/dashboard/DateRangeFilter';
@@ -11,6 +11,56 @@ import { VolumeChart } from '@/components/dashboard/VolumeChart';
 import { RankingList } from '@/components/dashboard/RankingList';
 import { ReferralSection } from '@/components/dashboard/ReferralSection';
 import { ThemeToggle } from '@/components/theme-toggle';
+
+const BUILDER_ADDRESS = '0xc36f6e7dc0ab7146c11f500e146d0084254c8bf6';
+const BUILDER_URL = `https://app.coinmarketman.com/hypertracker/builder/${BUILDER_ADDRESS}`;
+
+function truncateAddress(address: string): string {
+  if (address.length <= 10) return address;
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+function BuilderCopyButton() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(BUILDER_ADDRESS);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="ml-2 p-1.5 rounded hover:bg-muted transition-colors"
+      title="Copy address"
+    >
+      {copied ? (
+        <Check className="w-4 h-4 text-green-500" />
+      ) : (
+        <Copy className="w-4 h-4 text-muted-foreground" />
+      )}
+    </button>
+  );
+}
+
+function BuilderLinkButton() {
+  return (
+    <a
+      href={BUILDER_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="ml-1 p-1.5 rounded hover:bg-muted transition-colors inline-flex items-center"
+      title="View builder on Coin Market Manager"
+    >
+      <ExternalLink className="w-4 h-4 text-muted-foreground" />
+    </a>
+  );
+}
 
 function getTodayString(): string {
   const today = new Date();
@@ -212,7 +262,14 @@ export default function Home() {
           {/* Volume Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Daily Volume by Wallet</CardTitle>
+              <CardTitle className="flex flex-wrap items-center gap-2">
+                <span>Daily Volume by Wallet</span>
+                <span className="font-mono text-sm font-medium flex items-center">
+                  {truncateAddress(BUILDER_ADDRESS)}
+                  <BuilderCopyButton />
+                  <BuilderLinkButton />
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <VolumeChart
