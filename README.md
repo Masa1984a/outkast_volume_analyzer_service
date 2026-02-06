@@ -87,6 +87,13 @@ Stores individual trading fills with the following key fields:
 - `px`: Price
 - `sz`: Size
 - `volume_usd`: Calculated volume (px * sz)
+- `original_data_hash`: SHA-256 hash of original data (for deduplication)
+- `sequence_number`: Sequence number for duplicate data (1, 2, 3...)
+- `data_hash`: Legacy field (for backward compatibility)
+
+**Unique constraint**: `UNIQUE(original_data_hash, sequence_number)`
+
+This ensures that duplicate data from the API is stored completely without data loss.
 
 ### `sync_status` table
 Tracks synchronization status for the cron job.
@@ -178,7 +185,11 @@ outkast_volume_analyzer_service/
 │
 ├── scripts/
 │   ├── migrate.ts             # Database migration
-│   └── import-csv.ts          # CSV import utility
+│   ├── import-csv.ts          # CSV import utility
+│   ├── run-migration.ts       # Migration runner
+│   └── migrations/            # SQL migration files
+│       ├── 001_add_sequence_number.sql
+│       └── 001_add_sequence_number_rollback.sql
 │
 └── vercel.json                # Vercel configuration (Cron)
 ```
@@ -187,6 +198,20 @@ outkast_volume_analyzer_service/
 
 ### LZ4 Decompression
 The Hyperliquid API returns LZ4-compressed CSV files. The decompressor is implemented in `src/lib/hyperliquid/decompressor.ts`.
+
+### Sequence Number System (Added: 2026-01-31)
+The parser assigns sequence numbers to handle duplicate data from the API:
+- Same data appearing multiple times gets sequence numbers: 1, 2, 3...
+- Ensures 100% data completeness (no data loss from duplicates)
+- Typical duplicate rate: 1.8% - 6% of total records
+- Implementation: `src/lib/hyperliquid/parser.ts`
+
+**Example**: If the API returns identical trade data 3 times, they are stored as:
+- `original_data_hash: abc123...`, `sequence_number: 1`
+- `original_data_hash: abc123...`, `sequence_number: 2`
+- `original_data_hash: abc123...`, `sequence_number: 3`
+
+All three records contribute to volume calculations, ensuring accurate totals.
 
 ### Color-Coded Chart
 Top 5 wallets are color-coded in the stacked bar chart:
